@@ -188,11 +188,7 @@ fn main() {
     let gateway_ip = Ipv4Addr::from(base + 1);
     println!("猜测网关地址: {}\n", gateway_ip);
 
-<<<<<<< HEAD
-    // --- Step 5: 扫描局域网 ---
-=======
     // 扫描局域网
->>>>>>> 0ce5f1941b243c266251996cd8c61bfd2d9fbe63
     println!("开始扫描局域网中的在线主机 (串行)...");
     let start = Instant::now();
     let ips: Vec<Ipv4Addr> = (1..255)
@@ -226,11 +222,7 @@ fn main() {
         println!("[{:02}] {:<15}  {}", i, ip, mac);
     }
 
-<<<<<<< HEAD
-    // --- Step 6 & 7: 用户选择目标并获取 MAC ---
-=======
     // 用户选择目标并获取 MAC
->>>>>>> 0ce5f1941b243c266251996cd8c61bfd2d9fbe63
     print!("\n请输入目标主机编号或 IP: ");
     io::stdout().flush().unwrap();
     input.clear();
@@ -376,11 +368,7 @@ fn main() {
     let _ = sender_handle.join();
     let _ = forwarder_handle.join(); 
 
-<<<<<<< HEAD
-    // --- Step 9: ARP 恢复机制 ---
-=======
     // ARP 恢复机制
->>>>>>> 0ce5f1941b243c266251996cd8c61bfd2d9fbe63
     println!("\n攻击结束，恢复 ARP 表...");
     
     // 重新打开一个独立的发送通道用于恢复
